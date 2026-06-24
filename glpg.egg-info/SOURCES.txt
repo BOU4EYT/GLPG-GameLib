@@ -1,0 +1,15 @@
+LICENSE
+README.md
+pyproject.toml
+glpg/__init__.py
+glpg/_color.py
+glpg/_state.py
+glpg/draw.py
+glpg/input.py
+glpg/loop.py
+glpg/window.py
+glpg.egg-info/PKG-INFO
+glpg.egg-info/SOURCES.txt
+glpg.egg-info/dependency_links.txt
+glpg.egg-info/requires.txt
+glpg.egg-info/top_level.txt

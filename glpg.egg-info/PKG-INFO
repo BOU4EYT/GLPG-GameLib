@@ -1,0 +1,170 @@
+Metadata-Version: 2.4
+Name: glpg
+Version: 1.0.0
+Summary: A shorthand wrapper for pygame that makes game development fast and easy
+License: MIT
+Project-URL: Homepage, https://github.com/yourusername/glpg
+Project-URL: Repository, https://github.com/yourusername/glpg
+Keywords: pygame,game,gamedev,wrapper,shorthand
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Games/Entertainment
+Classifier: Topic :: Software Development :: Libraries
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: pygame>=2.0.0
+Dynamic: license-file
+
+# GLPG — GameLib for Pygame
+
+A shorthand wrapper that makes pygame fast and approachable.  
+Write games in a few lines instead of dozens.
+
+```
+pip install glpg
+```
+
+---
+
+## Quickstart — Managed Loop
+
+```python
+import glpg as gl
+
+gl.window("720p", title="My Game", fps=60, bg_color="#1a1a2e")
+
+@gl.on_update
+def update(dt):
+    if gl.key("escape"):
+        gl.quit()
+
+@gl.on_draw
+def draw():
+    gl.draw.rect(100, 100, 64, 64, "#e63946")
+    gl.draw.circle(400, 300, 40, "cyan")
+    gl.draw.text("Hello GLPG", 20, 20, size=32, color="white")
+
+gl.run()
+```
+
+## Quickstart — Manual Loop
+
+```python
+import glpg as gl
+
+gl.window("720p", title="Manual Loop")
+
+x = 100
+
+while (dt := gl.tick()) is not None:
+    if gl.key("escape"):
+        gl.quit()
+    if gl.key("right"):
+        x += 200 * dt
+
+    gl.draw.rect(x, 300, 48, 48, "white")
+    gl.flip()
+```
+
+---
+
+## API Reference
+
+### Window
+
+| Call | Description |
+|------|-------------|
+| `gl.window(size, title, icon, fps, bg_color)` | Initialise the window. Call once before anything else. |
+| `gl.get_size()` | Returns `(width, height)`. |
+| `gl.get_width()` / `gl.get_height()` | Individual dimensions. |
+| `gl.set_title(title)` | Update window title bar. |
+| `gl.set_fps(fps)` | Change FPS cap at runtime. |
+| `gl.set_bg_color(color)` | Change background clear colour. |
+| `gl.get_screen()` | Raw `pygame.Surface` for advanced use. |
+
+**Size strings:** `"480p"` (854×480) · `"720p"` (1280×720) · `"1080p"` (1920×1080) · `"1440p"` (2560×1440)  
+Or pass a custom `(width, height)` tuple.
+
+---
+
+### Managed Loop
+
+| Call | Description |
+|------|-------------|
+| `@gl.on_update` | Decorator — runs every frame, receives `dt` (seconds). |
+| `@gl.on_draw` | Decorator — runs every frame after screen clear. |
+| `gl.run()` | Start the loop. Blocks until window closes. |
+| `gl.quit()` | Signal the loop to stop. |
+| `gl.is_running()` | `True` while the loop is active. |
+| `gl.get_fps()` | Measured FPS this frame. |
+
+---
+
+### Manual Loop
+
+| Call | Description |
+|------|-------------|
+| `gl.tick()` | Call at the top of your loop. Returns `dt` in seconds, or `None` when done. |
+| `gl.flip()` | Call at the bottom of your loop to push the frame. |
+| `gl.quit()` | Stop the loop on the next tick. |
+
+---
+
+### Drawing
+
+All draw calls go through `gl.draw.*`.
+
+| Call | Description |
+|------|-------------|
+| `gl.draw.rect(x, y, w, h, color, border, radius)` | Rectangle. `radius` for rounded corners. |
+| `gl.draw.circle(x, y, radius, color, border)` | Circle centred at `(x, y)`. |
+| `gl.draw.ellipse(x, y, w, h, color, border)` | Ellipse inside bounding box. |
+| `gl.draw.line(x1, y1, x2, y2, color, width)` | Line between two points. |
+| `gl.draw.polygon(points, color, border)` | Polygon from a list of `(x, y)` tuples. |
+| `gl.draw.text(content, x, y, size, color, font, center, antialias)` | Text. Pass `center=True` to centre on `(x, y)`. Returns `pygame.Rect`. |
+| `gl.draw.image(path, x, y, scale, center, cache)` | Image from file. Returns `pygame.Rect`. |
+| `gl.draw.clear(color)` | Fill screen. Defaults to window `bg_color`. |
+| `gl.draw.clear_image_cache()` | Evict cached image surfaces (between scenes). |
+
+**Colors** accept:
+- Named strings → `"red"` `"white"` `"cornflowerblue"`
+- Hex strings   → `"#e63946"` `"#ff0000ff"` (with alpha)
+- RGB tuples    → `(255, 99, 71)` `(255, 99, 71, 128)`
+
+**`border=0`** on any shape = filled. Any positive value = outline only.
+
+---
+
+### Input — Keyboard
+
+| Call | Description |
+|------|-------------|
+| `gl.key("W")` | `True` every frame the key is held. |
+| `gl.key_pressed("space")` | `True` only on the first frame the key is pressed. |
+| `gl.key_released("shift")` | `True` only on the release frame. |
+
+**Key names:** letters `a–z`, digits `0–9`, `"space"`, `"enter"`, `"escape"`, `"backspace"`, `"tab"`, `"up"` `"down"` `"left"` `"right"`, `"shift"` `"ctrl"` `"alt"` (also `"lshift"` `"rshift"` etc.), `"f1"–"f12"`, `"delete"`, `"insert"`, `"home"`, `"end"`, `"pageup"`, `"pagedown"`.
+
+---
+
+### Input — Mouse
+
+| Call | Description |
+|------|-------------|
+| `gl.mouse.pos` | `(x, y)` cursor position. |
+| `gl.mouse.x` / `gl.mouse.y` | Individual axes. |
+| `gl.mouse.clicked("left")` | `True` only on the click frame. Buttons: `"left"` `"right"` `"middle"`. |
+| `gl.mouse.held("right")` | `True` every frame the button is held. |
+
+---
+
+## License
+
+MIT License 2026
