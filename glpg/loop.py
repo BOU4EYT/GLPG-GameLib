@@ -43,26 +43,9 @@ def on_draw(fn):
 
 # ── managed loop ─────────────────────────────────────────────────────────────
 
-def run():
-    """
-    Start the managed game loop.  Blocks until the window is closed.
-    Requires gl.window() to have been called first.
-    Register logic with @gl.on_update and rendering with @gl.on_draw.
-
-    Example:
-        gl.window("720p", title="My Game")
-
-        @gl.on_update
-        def update(dt): ...
-
-        @gl.on_draw
-        def draw(): ...
-
-        gl.run()
-    """
+def run(auto_quit: bool = False):
     _require_window("gl.run()")
     _state.running = True
-
     while _state.running:
         dt = _state.clock.tick(_state.fps) / 1000.0
         _input._process_events()
@@ -79,7 +62,8 @@ def run():
 
         pg.display.flip()
 
-    pg.quit()
+    if auto_quit:
+        pg.quit()
 
 
 # ── manual loop ──────────────────────────────────────────────────────────────
